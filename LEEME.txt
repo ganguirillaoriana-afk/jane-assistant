@@ -1,0 +1,14 @@
+JANE — PROTOTIPO PWA INICIAL
+
+Contenido:
+- index.html: interfaz inicial.
+- manifest.webmanifest: identidad instalable.
+- sw.js: caché básica para abrir la carcasa sin conexión.
+- icon.svg: icono.
+
+IMPORTANTE:
+Esta versión todavía NO incluye IA, reconocimiento de voz ni activación por palabra clave.
+La prueba de voz usa la síntesis de voz integrada en el navegador; no reproduce la voz exacta de Patrick Jane.
+
+Para instalar una PWA hace falta publicarla en un sitio HTTPS. Abrir index.html como archivo local no alcanza.
+Próximo paso: subir estos archivos a un hosting HTTPS desde el navegador del Samsung. Después conectaremos el reconocimiento de voz y un backend seguro para la IA.

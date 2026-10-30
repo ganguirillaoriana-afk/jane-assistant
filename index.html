@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17232d">
+  <meta name="description" content="Jane, asistente personal de voz.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>Jane</title>
+  <style>
+    :root { color-scheme: dark; --bg:#111a20; --panel:#1c2932; --panel2:#263640; --gold:#d6bd91; --cream:#f2eadc; --muted:#a9b1b4; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:radial-gradient(ellipse at top,#293943 0,#111a20 62%); color:var(--cream); font-family:Georgia,serif; }
+    main { width:min(100%,560px); min-height:100vh; margin:auto; padding:28px 20px max(24px,env(safe-area-inset-bottom)); display:flex; flex-direction:column; }
+    header { display:flex; justify-content:space-between; align-items:center; color:var(--gold); font:12px system-ui,sans-serif; letter-spacing:.18em; }
+    .status { border:1px solid #52616a; border-radius:99px; padding:7px 10px; letter-spacing:.05em; }
+    .hero { text-align:center; margin:auto 0 28px; }
+    .mark { width:112px; height:112px; border:1px solid #8e7957; border-radius:50%; display:grid; place-items:center; margin:0 auto 20px; box-shadow:0 0 50px #d6bd9115,inset 0 0 30px #d6bd9110; }
+    .mark span { font-size:42px; color:var(--gold); }
+    h1 { font-size:42px; font-weight:400; letter-spacing:.18em; margin:0 0 8px; }
+    .subtitle { color:var(--gold); font:11px system-ui,sans-serif; letter-spacing:.22em; }
+    .quote { color:#d8d0c3; font-style:italic; margin-top:28px; font-size:18px; }
+    .conversation { background:#0c1318a8; border:1px solid #394750; border-radius:18px; padding:16px; min-height:100px; max-height:32vh; overflow:auto; font:14px/1.5 system-ui,sans-serif; }
+    .hint { color:var(--muted); text-align:center; font:12px system-ui,sans-serif; margin:12px 0 20px; }
+    .controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    button { border:1px solid #8e7957; border-radius:14px; padding:15px 12px; background:var(--panel2); color:var(--cream); font:600 14px system-ui,sans-serif; }
+    button.primary { background:var(--gold); color:#17232d; border-color:var(--gold); }
+    button:disabled { opacity:.45 }
+    .note { color:var(--muted); font:11px/1.5 system-ui,sans-serif; text-align:center; margin-top:16px; }
+    .line { height:1px; background:#53616a; margin:22px 0; opacity:.5 }
+  </style>
+</head>
+<body>
+<main>
+  <header><span>PERSONAL VOICE ASSISTANT</span><span class="status" id="status">EN ESPERA</span></header>
+  <section class="hero">
+    <div class="mark"><span>J</span></div>
+    <h1>JANE</h1>
+    <div class="subtitle">OBSERVAR · ESCUCHAR · RAZONAR</div>
+    <div class="quote">«Acá estoy.»</div>
+  </section>
+  <section class="conversation" id="conversation" aria-live="polite">
+    <span style="color:#a9b1b4">Jane está listo para la primera prueba. Todavía no está conectado a un cerebro de IA.</span>
+  </section>
+  <p class="hint" id="hint">Esta primera versión es la carcasa instalable. El cerebro y la conversación real se conectarán después.</p>
+  <div class="controls">
+    <button class="primary" id="talk">● Hablar con Jane</button>
+    <button id="stop">■ Detener voz</button>
+  </div>
+  <div class="line"></div>
+  <button id="test">Probar voz del teléfono</button>
+  <p class="note">Prototipo inicial · La activación «Jane, ¿estás?» y la IA todavía no están conectadas.</p>
+</main>
+<script>
+  const statusEl = document.getElementById('status');
+  const conversation = document.getElementById('conversation');
+  const hint = document.getElementById('hint');
+  document.getElementById('test').addEventListener('click', () => {
+    if (!('speechSynthesis' in window)) {
+      hint.textContent = 'Este navegador no ofrece síntesis de voz. Probá con Chrome actualizado.';
+      return;
+    }
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance('Acá estoy. ¿En qué puedo ayudarte?');
+    utterance.lang = 'es-AR';
+    utterance.rate = 0.88;
+    utterance.pitch = 0.88;
+    utterance.onstart = () => statusEl.textContent = 'HABLANDO';
+    utterance.onend = () => statusEl.textContent = 'EN ESPERA';
+    speechSynthesis.speak(utterance);
+  });
+  document.getElementById('stop').addEventListener('click', () => {
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    statusEl.textContent = 'EN ESPERA';
+  });
+  document.getElementById('talk').addEventListener('click', () => {
+    hint.textContent = 'El botón ya responde. En la próxima etapa conectaremos el reconocimiento de voz y el cerebro de IA.';
+    statusEl.textContent = 'LISTO PARA CONECTAR';
+  });
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+</script>
+</body>
+</html>
